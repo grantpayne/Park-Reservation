@@ -10,7 +10,7 @@ namespace dao_exercises.DAL
     {
         private string connectionString;
         private const string SQL_GetAllEmployees = "SELECT * FROM employee";
-        private const string SQL_SearchEmployees = "SELECT * FROM employee WHERE first_name LIKE %@firstNameInput% OR last_name LIKE %@lastNameInput%";
+        private const string SQL_SearchEmployees = "SELECT * FROM employee WHERE first_name LIKE @firstNameInput OR last_name LIKE @lastNameInput";
 
         // Single Parameter Constructor
         public EmployeeSqlDAL(string dbConnectionString)
@@ -76,8 +76,8 @@ namespace dao_exercises.DAL
                 {
                     conn.Open();
                     SqlCommand cmd = new SqlCommand(SQL_SearchEmployees, conn);
-                    cmd.Parameters.AddWithValue("@firstNameInput", firstname);
-                    cmd.Parameters.AddWithValue("@lastNameInput", lastname);
+                    cmd.Parameters.AddWithValue("@firstNameInput", "%" + firstname + "%");
+                    cmd.Parameters.AddWithValue("@lastNameInput", "%" + lastname + "%");
                     SqlDataReader reader = cmd.ExecuteReader();
                     while (reader.Read())
                     {
