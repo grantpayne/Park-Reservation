@@ -112,7 +112,7 @@ namespace dao_exercises.DAL
                     {
                         result = true;
                     }
-                    cmd.ExecuteNonQuery();
+                    
 
                     return result;
                 }
