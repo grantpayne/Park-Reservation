@@ -12,7 +12,8 @@ namespace dao_exercises.DAL
         private string connectionString;
         private const string SQL_SelectDepartments = @"SELECT * FROM department";
         private const string SQL_CreateDepartment = "INSERT INTO department(name) VALUES (@name)";
-        private string SQL_GetNewestDepartmentID = "SELECT department_id FROM department WHERE name = @name";
+        private const string SQL_GetNewestDepartmentID = "SELECT department_id FROM department WHERE name = @name";
+        private const string SQL_UpdateDepartment = "UPDATE department SET name = @name WHERE department_id = @id";
 
         // Single Parameter Constructor
         public DepartmentSqlDAL(string dbConnectionString)
@@ -95,7 +96,32 @@ namespace dao_exercises.DAL
         /// <returns>True, if successful.</returns>
         public bool UpdateDepartment(Department updatedDepartment)
         {
-            throw new NotImplementedException();
+            bool result = false;
+
+            try
+            {
+                using (SqlConnection conn = new SqlConnection(connectionString))
+                {
+                    conn.Open();
+
+                    SqlCommand cmd = new SqlCommand(SQL_UpdateDepartment, conn);
+                    cmd.Parameters.AddWithValue("@id", updatedDepartment.Id);
+                    cmd.Parameters.AddWithValue("@name", updatedDepartment.Name);
+
+                    if (cmd.ExecuteNonQuery() > 0)
+                    {
+                        result = true;
+                    }
+                    cmd.ExecuteNonQuery();
+
+                    return result;
+                }
+            }
+            catch (Exception)
+            {
+
+                throw;
+            }
         }
 
     }
