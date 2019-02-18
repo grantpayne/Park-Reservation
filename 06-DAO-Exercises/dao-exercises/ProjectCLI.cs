@@ -19,7 +19,7 @@ namespace dao_exercises
         const string Command_AssignEmployeeToProject = "9";
         const string Command_RemoveEmployeeFromProject = "10";
         const string Command_Quit = "q";
-        const string DatabaseConnection = "<connection string goes here AND ONLY HERE>";
+        const string DatabaseConnection = @"Data Source=.\sqlexpress;Initial Catalog=EmployeeDB;Integrated Security=True";
 
         public void RunCLI()
         {
