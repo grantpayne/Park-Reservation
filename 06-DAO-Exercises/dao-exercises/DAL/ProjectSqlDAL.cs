@@ -6,7 +6,7 @@ using System.Data.SqlClient;
 
 namespace dao_exercises.DAL
 {
-    class ProjectSqlDAL
+    public class ProjectSqlDAL
     {
         private string connectionString;
         private const string SQL_GetAllProjects = "SELECT * FROM project";

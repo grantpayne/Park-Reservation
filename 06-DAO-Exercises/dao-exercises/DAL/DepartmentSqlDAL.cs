@@ -7,7 +7,7 @@ using dao_exercises.Models;
 
 namespace dao_exercises.DAL
 {
-    class DepartmentSqlDAL
+    public class DepartmentSqlDAL
     {
         private string connectionString;
         private const string SQL_SelectDepartments = @"SELECT * FROM department";

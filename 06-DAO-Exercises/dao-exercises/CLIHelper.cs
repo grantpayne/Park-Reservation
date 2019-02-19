@@ -4,7 +4,7 @@ using System.Text;
 
 namespace dao_exercises
 {
-    class CLIHelper
+    public class CLIHelper
     {
         public static DateTime GetDateTime(string message)
         {

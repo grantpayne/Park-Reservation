@@ -4,7 +4,7 @@ using System.Text;
 
 namespace dao_exercises.Models
 {
-    class Project
+    public class Project
     {
         /// <summary>
         /// The project's id.

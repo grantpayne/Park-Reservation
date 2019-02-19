@@ -126,7 +126,7 @@ namespace dao_exercises
             }
         }
 
-        private void CreateProject()
+        public void CreateProject()
         {
             string projectName = CLIHelper.GetString("Provide a name for the project:");
             DateTime startDate = CLIHelper.GetDateTime("Provide a start date for the project:");

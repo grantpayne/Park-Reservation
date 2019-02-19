@@ -6,7 +6,7 @@ using System.Data.SqlClient;
 
 namespace dao_exercises.DAL
 {
-    class EmployeeSqlDAL
+    public class EmployeeSqlDAL
     {
         private string connectionString;
         private const string SQL_GetAllEmployees = "SELECT * FROM employee";
