@@ -25,14 +25,6 @@ namespace dao_exercises.test
                 conn.Open();
 
                 SqlCommand cmd;
-
-                //cmd = new SqlCommand("INSERT INTO project(name, from_date, to_date) VALUES ('testProject', 1900-01-01, 2000-01-01); SELECT CAST(SCOPE_IDENTITY() as int);", conn);
-                //int testID = (int)cmd.ExecuteScalar();
-
-                //cmd = new SqlCommand("INSERT INTO project_employee(project_id, employee_id) VALUES (@testID, 1)");
-                //cmd.Parameters.AddWithValue("@testID", testID);
-                //cmd.ExecuteNonQuery();
-
             }
         }
 
@@ -51,7 +43,7 @@ namespace dao_exercises.test
             testProject.StartDate = DateTime.Parse("2018-01-01");
             testProject.EndDate = DateTime.Parse("2018-02-01");
 
-            int projectIdReturnedFromMethod = project.CreateProject(testProject); //TODO Here is where we were
+            int projectIdReturnedFromMethod = project.CreateProject(testProject);
 
             using (SqlConnection conn = new SqlConnection(connectionString))
             {
@@ -87,11 +79,6 @@ namespace dao_exercises.test
 
                 SqlCommand cmd;
 
-                //cmd = new SqlCommand("SELECT COUNT(*) FROM project_employee WHERE project_id = 1 AND employee_id = 3", conn);
-                //int result = (int)cmd.ExecuteScalar();
-                //Assert.AreEqual(1, result);
-
-
                 cmd = new SqlCommand("SELECT COUNT(*) FROM project_employee WHERE project_id = 1 AND employee_id = 3", conn);
                 int result = (int)cmd.ExecuteScalar();
                 Assert.AreEqual(0, result);
@@ -114,6 +101,15 @@ namespace dao_exercises.test
                 int result = (int)cmd.ExecuteScalar();
                 Assert.AreEqual(1, result);
             }
+        }
+
+        [TestMethod]
+        public void GetAllProjectsTest()
+        {
+            DepartmentSqlDAL departmentSqlDAL = new DepartmentSqlDAL(connectionString);
+            IList<Department> deps = departmentSqlDAL.GetDepartments();
+
+            Assert.IsNotNull(deps);
         }
     }
 }
