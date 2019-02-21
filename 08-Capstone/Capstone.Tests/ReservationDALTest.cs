@@ -1,6 +1,9 @@
-﻿using System;
+﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
+using System.Data.SqlClient;
+using System.Transactions;
+using Capstone.DAL;
 using System.Collections.Generic;
-using System.Text;
+using Capstone.Models;
 
 namespace Capstone.Tests
 {

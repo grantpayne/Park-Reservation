@@ -8,6 +8,9 @@ EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "etc", "etc", "{EE0799DB-118B-4EF7-A96B-A9EB08A5376B}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Capstone.Tests", "Capstone.Tests\Capstone.Tests.csproj", "{FC05B815-3F52-476D-B01A-855AF9403AD2}"
+	ProjectSection(ProjectDependencies) = postProject
+		{266B9A2D-0BEB-4202-AB48-DC46789546DE} = {266B9A2D-0BEB-4202-AB48-DC46789546DE}
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
