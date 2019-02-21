@@ -72,7 +72,7 @@ namespace Capstone
             return userInput;
         }
 
-        //TODO: Finish method to parse user date input into SQL-useable date string
+        //TODO: Finish method to parse user date input into SQL-useable date string IF NECESSARY
 
         //public static string CreateSqlDateInput(string year, string month, string day)
         //{
