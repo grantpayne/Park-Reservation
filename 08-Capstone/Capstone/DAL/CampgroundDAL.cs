@@ -6,5 +6,11 @@ namespace Capstone.DAL
 {
     public class CampgroundDAL
     {
+        private string connectionString;
+
+        public CampgroundDAL(string DatabaseConnection)
+        {
+            connectionString = DatabaseConnection;
+        } 
     }
 }
