@@ -6,5 +6,6 @@ namespace Capstone
 {
     public class ProgramCLI
     {
+        const string DatabaseConnection = @"Data Source=.\sqlexpress;Initial Catalog=NationalParkReservation;Integrated Security=True";
     }
 }
