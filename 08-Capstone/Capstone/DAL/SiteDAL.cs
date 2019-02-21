@@ -6,5 +6,12 @@ namespace Capstone.DAL
 {
     public class SiteDAL
     {
+        private string connectionString;
+
+        public SiteDAL(string DatabaseConnection)
+        {
+            connectionString = DatabaseConnection;
+        }
     }
+}
 }
