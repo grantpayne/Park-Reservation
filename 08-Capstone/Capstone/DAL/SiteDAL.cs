@@ -10,7 +10,7 @@ namespace Capstone.DAL
     public class SiteDAL
     {
         private string connectionString;
-        private const string SQL_GetUnreservedCampsites = @"SELECT TOP 5 * FROM site JOIN reservation ON reservation.site_id = site.site_id WHERE site.campground_id = @campgroundID AND NOT ((@reqFromDate <= reservation.to_date AND @reqToDate >= reservation.from_date) OR (reservation.from_date <= @reqFromDate AND reservation.to_date >= @reqToDate))";
+        private const string SQL_GetUnreservedCampsites = @"SELECT TOP 5 * FROM site LEFT JOIN reservation ON reservation.site_id = site.site_id WHERE reservation_id IS NULL OR (site.campground_id = @campgroundID AND NOT ((@reqFromDate <= reservation.to_date AND @reqToDate >= reservation.from_date) OR (reservation.from_date <= @reqFromDate AND reservation.to_date >= @reqToDate)))";
         private const string SQL_GetCost = @"SELECT daily_fee FROM campground WHERE campground_id = @campgroundID";
         private decimal cost;
 

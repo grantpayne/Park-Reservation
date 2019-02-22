@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Capstone;
+using System;
 
 namespace capstone
 {
@@ -6,10 +7,8 @@ namespace capstone
     {
         static void Main(string[] args)
         {
-            // If Main contains more than 2 lines of executable code,
-            // you're doing it wrong.
-            Console.WriteLine("Hello World!");
-            Console.ReadLine();
+            ProgramCLI programCLI = new ProgramCLI();
+            programCLI.RunCLI();
         }
     }
 }

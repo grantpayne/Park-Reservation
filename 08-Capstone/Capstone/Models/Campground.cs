@@ -15,7 +15,8 @@ namespace Capstone.Models
 
         public override string ToString() //TODO: Campground ToString Fotmatting
         {
-            return "";
+            string campgroundString = $"#{Campground_id} {Name} {Open_from_mm} {Open_to_mm} {Daily_fee}";
+            return campgroundString;
         }
     }
 }
