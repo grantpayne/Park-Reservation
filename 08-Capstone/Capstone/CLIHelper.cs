@@ -4,7 +4,7 @@ using System.Text;
 
 namespace Capstone
 {
-    class CLIHelper
+    public class CLIHelper
     {
         public static int GetInteger(string message)
         {
@@ -72,24 +72,29 @@ namespace Capstone
             return userInput;
         }
 
-        //TODO: Finish method to parse user date input into SQL-useable date string IF NECESSARY
+        public static string GetDateTime(string message)
+        {
+            string userInput = String.Empty;
+            int numberOfAttempts = 0;
+            DateTime sqlDateTime;
 
-        //public static string CreateSqlDateInput(string year, string month, string day)
-        //{
-        //    string userInput = String.Empty;
-        //    int numberOfAttempts = 0;
+            do
+            {
 
-        //    do
-        //    {
+                if (numberOfAttempts > 0)
+                {
+                    Console.WriteLine("Invalid input format. Please try again");
+                }
 
-        //        if (numberOfAttempts > 0)
-        //        {
-        //            Console.WriteLine("Invalid input format. Please try again");
-        //        }
+                Console.Write(message + " ");
+                userInput = Console.ReadLine();
+                numberOfAttempts++;
 
-                
+            } while (!DateTime.TryParse(userInput, out sqlDateTime));
 
-        //    } while (String.IsNullOrEmpty(userInput));
-        //}
+            string sqlDateString = sqlDateTime.ToString("yyyy-MM-dd");
+
+            return sqlDateString;
+        }
     }
 }

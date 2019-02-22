@@ -17,7 +17,15 @@ namespace Capstone.Models
 
         public override string ToString() //TODO Create the ToStringOverride
         {
-            return base.ToString();
+            string accessibleString = (Accessible == true) ? "Yes" : "No";
+
+            string maxRvLength = (MaxRVLength > 0) ? MaxRVLength.ToString() : "N/A";
+
+            string utilityString = (Accessible == true) ? "Yes" : "N/A";
+
+            string siteString = $"{SiteID}  {MaxOccupancy}  {accessibleString} {maxRvLength}  {utilityString}  {Cost:C}";
+
+            return siteString;
         }
     }
 }
