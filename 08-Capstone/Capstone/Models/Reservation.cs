@@ -13,7 +13,7 @@ namespace Capstone.Models
         public DateTime To_date { get; set; }
         public DateTime Create_date { get; set; }
 
-        public override string ToString()
+        public override string ToString() //TODO:  Will need to implement this for Bonus showing all reservations out 30 days
         {
             return "";
         }

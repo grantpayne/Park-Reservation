@@ -9,7 +9,7 @@ namespace Capstone
     public class ProgramCLI
     {
         const string DatabaseConnection = @"Data Source=.\sqlexpress;Initial Catalog=NationalParkReservation;Integrated Security=True";
-        const string Command_Quit = "q";
+        const string Command_Quit = "Q";
 
         public void RunCLI()
         {
@@ -20,12 +20,14 @@ namespace Capstone
                 ParkDAL parkDAL = new ParkDAL(DatabaseConnection);
                 IList<Park> parkList = new List<Park>();
                 parkList = parkDAL.GetParkList();
+                Console.WriteLine("Select a Park for Further Details\n");
                 foreach (Park park in parkList)
                 {
                     Console.WriteLine($"{park.ParkID}) {park.Name}");
                 }
+                Console.WriteLine($"{Command_Quit}) Quit\n");
 
-                string command = CLIHelper.GetString("Q) Quit\n\nSelection:").ToLower();
+                string command = CLIHelper.GetString("Selection:").ToUpper();
                 int commandIfNum;
                 if (command == Command_Quit)
                 {
@@ -62,7 +64,6 @@ namespace Capstone
 
             }
         }
-
 
         public void ParkInfoScreen(int parkID)
         {
@@ -116,7 +117,7 @@ namespace Capstone
             {
                 int command;
 
-                command = CLIHelper.GetInteger("Select a Command\n1) Search for available reservation\n2) Return to previous screen\nSelection:");
+                command = CLIHelper.GetInteger("\nSelect a Command\n1) Search for available reservation\n2) Return to previous screen\nSelection:");
 
                 switch (command)
                 {

@@ -11,11 +11,11 @@ namespace Capstone.DAL
     {
         private const string SQL_MakeReservation = "INSERT INTO reservation(site_id, name, from_date, to_date, create_date) VALUES(@siteID, @name, @fromDate, @toDate, GETDATE()); SELECT CAST(SCOPE_IDENTITY() AS int);";
         private string connectionString;
+
         public ReservationDAL(string DatabaseConnection)
         {
             connectionString = DatabaseConnection;
         }
-
 
         public int MakeReservation(string reqFromDate, string reqToDate, int siteID, string name)
         {

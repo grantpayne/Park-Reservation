@@ -15,7 +15,7 @@ namespace Capstone.Models
         public bool Utilities { get; set; }
         public decimal Cost { get; set; }
 
-        public override string ToString() 
+        public override string ToString() //TODO: probably delete
         {
             string accessibleString = (Accessible == true) ? "Yes" : "No";
 
@@ -23,7 +23,7 @@ namespace Capstone.Models
 
             string utilityString = (Accessible == true) ? "Yes" : "N/A";
 
-            string siteString = $"{SiteID}  {MaxOccupancy}  {accessibleString} {maxRvLength}  {utilityString}  {Cost:C}";
+            string siteString = $"{SiteID}  {MaxOccupancy}  {accessibleString}  {maxRvLength}  {utilityString}  {Cost:C}";
 
             return siteString;
         }
@@ -36,7 +36,7 @@ namespace Capstone.Models
 
             string utilityString = (Accessible == true) ? "Yes" : "N/A";
 
-            string siteString = $"{SiteID}  {MaxOccupancy}  {accessibleString} {maxRvLength}  {utilityString}  {lengthOfStay * Cost:C}";
+            string siteString = $"{SiteID}  {MaxOccupancy}  {accessibleString}  {maxRvLength}  {utilityString}  {lengthOfStay * Cost:C}";
 
             return siteString;
         }
