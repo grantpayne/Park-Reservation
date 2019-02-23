@@ -14,6 +14,7 @@ namespace Capstone.Models
         public int MaxRVLength { get; set; }
         public bool Utilities { get; set; }
         public decimal Cost { get; set; }
+        public string CampgroundName { get; set; }
 
         public override string ToString() //TODO: probably delete
         {

@@ -97,7 +97,8 @@ namespace Capstone
                         ParkCampgroundScreen(currentWorkingPark);
                         break;
 
-                    case (2): //Search reservations by park
+                    case (2):
+                        ParkWideAvailabilitySearch(parkID);//Search reservations by park
                         break;
 
                     case (3):
@@ -143,11 +144,49 @@ namespace Capstone
         }
 
         //TODO: Search reservations by park method
+        public void ParkWideAvailabilitySearch(int parkID)
+        {
+            IList<Campground> campgroundList = new List<Campground>();
+            List<Site> masterSiteList = new List<Site>();
+            CampgroundDAL campgroundDAL = new CampgroundDAL(DatabaseConnection);
+            campgroundList = campgroundDAL.GetCampgroundList(parkID);
+            SiteDAL siteDAL = new SiteDAL(DatabaseConnection);
+            string reqFromDate;
+            string reqToDate;
+            bool isFirstTry = true;
+            do
+            {
+                if (!isFirstTry)
+                {
+                    Console.WriteLine("\nThere are no open campsites in the selected timeframe for that park.\nTry an alternative date range.");
+                }
+
+                reqFromDate = CLIHelper.GetDateTime("What is the arrival date? (MM/DD/YYYY):");
+                reqToDate = CLIHelper.GetDateTime("What is the departure date? (MM/DD/YYYY):");
+
+                foreach (Campground campground in campgroundList)
+                {
+                    IList<Site> campgroundSiteList = new List<Site>();
+                    campgroundSiteList = siteDAL.GetUnreservedCampsites(reqFromDate, reqToDate, campground.Campground_id);
+                    masterSiteList.AddRange(campgroundSiteList);
+                }
+
+                isFirstTry = false;
+            } while (masterSiteList.Count == 0);
+
+            int lengthOfStay = CLIHelper.GetLengthOfStay(reqFromDate, reqToDate);
+
+            Console.WriteLine("Results Matching Your Search Criteria\nCampground  Site No.  Max Occup.  Accssible?  Max RV Length  Utility  Cost");
+            Console.WriteLine("Header");
+            foreach (Site site in masterSiteList)
+            {
+                Console.WriteLine($"{site.CampgroundName}  " + site.ToString(lengthOfStay));
+            }
+        }
 
         public void Display30DaysReservation(int parkID)
         {
             ReservationDAL reservationDAL = new ReservationDAL(DatabaseConnection);
-            //$"{From_date.ToShortDateString()}  {To_date.ToShortDateString()}  {Reservation_id}  {Name}  {Site_number}  {Campground}  {Create_date.ToLongDateString()}";
             IList<Reservation> reservationList = new List<Reservation>();
             reservationList = reservationDAL.Get30DayReservations(parkID);
             Console.Clear();
