@@ -9,10 +9,6 @@ namespace Capstone
     public class ProgramCLI
     {
         const string DatabaseConnection = @"Data Source=.\sqlexpress;Initial Catalog=NationalParkReservation;Integrated Security=True";
-        const string Command_SelectAcadia = "1";
-        const string Command_Arches = "2";
-        const string Command_Cuyahoga = "3";
-        const string Command_Options = "4";
         const string Command_Quit = "q";
 
         public void RunCLI()
@@ -21,33 +17,49 @@ namespace Capstone
             {
                 Console.Clear();
 
-                string command = CLIHelper.GetString("Select a park for further details\n1) Acadia\n2) Arches\n3) Cuyahoga Valley\n4) Additional Options\nQ) Quit\nSelection:");
-
-                switch (command.ToLower())
+                ParkDAL parkDAL = new ParkDAL(DatabaseConnection);
+                IList<Park> parkList = new List<Park>();
+                parkList = parkDAL.GetParkList();
+                foreach (Park park in parkList)
                 {
-                    case Command_SelectAcadia:
-                        ParkInfoScreen(1);
-                        break;
-
-                    case Command_Arches:
-                        ParkInfoScreen(2);
-                        break;
-
-                    case Command_Cuyahoga:
-                        ParkInfoScreen(3);
-                        break;
-
-                    case Command_Options:
-                        break;
-
-                    case Command_Quit:
-                        return;
-
-                    default:
-                        Console.WriteLine("Please enter a valid selection from the menu. Press Enter to try again.");
-                        Console.ReadLine();
-                        break;
+                    Console.WriteLine($"{park.ParkID}) {park.Name}");
                 }
+
+                string command = CLIHelper.GetString("Q) Quit\n\nSelection:").ToLower();
+                int commandIfNum;
+                if (command == Command_Quit)
+                {
+                    return;
+                }
+                else if (!int.TryParse(command, out commandIfNum))
+                {
+                    Console.WriteLine("Please make a valid selection from the menu. Press Enter to try again.");
+                    Console.ReadLine();
+                    continue;
+                }
+                else
+                {
+                    bool commandNumIsInParkList = false;
+                    foreach (Park park in parkList)
+                    {
+                        if (park.ParkID == commandIfNum)
+                        {
+                            commandNumIsInParkList = true;
+                            break;
+                        }
+                    }
+                    if (commandNumIsInParkList)
+                    {
+                        ParkInfoScreen(commandIfNum);
+                    }
+                    else
+                    {
+                        Console.WriteLine("Please make a valid selection from the menu. Press Enter to try again.");
+                        Console.ReadLine();
+                    }
+                }
+
+
             }
         }
 
@@ -96,25 +108,16 @@ namespace Capstone
             }
         }
 
-        public void ParkCampgroundScreen(Park currentWorkingPark) 
+        public void ParkCampgroundScreen(Park currentWorkingPark)
         {
-            CampgroundDAL campgroundDAL = new CampgroundDAL(DatabaseConnection);
-            IList<Campground> campgroundList = campgroundDAL.GetCampgroundList(currentWorkingPark.ParkID);
-
-            Console.Clear();
-            Console.WriteLine("Park campgrounds");
-            Console.WriteLine($"{currentWorkingPark.Name} National Park");  //Refactor into its own method
-            foreach (Campground campground in campgroundList)
-            {
-                Console.WriteLine(campground.ToString());
-            }
+            DisplayCampgrounds(currentWorkingPark);
 
             while (true)
             {
                 int command;
 
                 command = CLIHelper.GetInteger("Select a Command\n1) Search for available reservation\n2) Return to previous screen\nSelection:");
-           
+
                 switch (command)
                 {
                     case (1):
@@ -134,16 +137,7 @@ namespace Capstone
 
         public void CampgroundReservationScreen(Park currentWorkingPark)
         {
-
-            CampgroundDAL campgroundDAL = new CampgroundDAL(DatabaseConnection);
-            IList<Campground> campgroundList = campgroundDAL.GetCampgroundList(currentWorkingPark.ParkID);
-            Console.Clear();
-            Console.WriteLine("Park campgrounds");
-            Console.WriteLine($"{currentWorkingPark.Name} National Park");       //Refactor into its own method
-            foreach (Campground campground in campgroundList)                   //Refactor into its own method
-            {                                                                   //Refactor into its own method
-                Console.WriteLine(campground.ToString());                    //Refactor into its own method
-            }
+            DisplayCampgrounds(currentWorkingPark);
 
             SiteDAL siteDal = new SiteDAL(DatabaseConnection);
             IList<Site> unreservedSites = new List<Site>();
@@ -152,10 +146,10 @@ namespace Capstone
             bool isFirstTry = true;
             do
             {
-                
+
                 if (!isFirstTry)
                 {
-                    Console.WriteLine("There are no open campsites in the selected timeframe for that campground.\nPlease Try again.\n");
+                    Console.WriteLine("There are no open campsites in the selected timeframe for that campground.\nTry an alternative date range.\n");
                 }
 
                 int campgroundNum = CLIHelper.GetInteger("\nWhich campground (enter 0 to cancel)?");
@@ -172,16 +166,16 @@ namespace Capstone
 
             } while (unreservedSites.Count == 0);
 
+            int lengthOfStay = CLIHelper.GetLengthOfStay(reqFromDate, reqToDate);
+
             Console.WriteLine("Results Matching Your Search Criteria\nSite No.  Max Occup.  Accssible?  Max RV Length  Utility  Cost");
             foreach (Site site in unreservedSites)
             {
-                Console.WriteLine(site.ToString());
+                Console.WriteLine(site.ToString(lengthOfStay));
             }
 
-
-
             ReservationDAL reservationDAL = new ReservationDAL(DatabaseConnection);
-            while(true)
+            while (true)
             {
                 int campsiteChoice = CLIHelper.GetInteger("Which campground(enter 0 to cancel)?");
                 if (campsiteChoice == 0)
@@ -199,18 +193,27 @@ namespace Capstone
                         Console.ReadLine();
                         return;
                     }
-                    
+
                 }
 
                 Console.WriteLine("Please make a valid selection from the list.");
 
             }
-            
 
+        }
 
-
-
-
+        public void DisplayCampgrounds(Park currentWorkingPark)
+        {
+            CampgroundDAL campgroundDAL = new CampgroundDAL(DatabaseConnection);
+            IList<Campground> campgroundList = campgroundDAL.GetCampgroundList(currentWorkingPark.ParkID);
+            Console.Clear();
+            Console.WriteLine("Park campgrounds");
+            Console.WriteLine($"{currentWorkingPark.Name} National Park");       
+            foreach (Campground campground in campgroundList)                   
+            {                                                                   
+                Console.WriteLine(campground.ToString());                    
+            }
+            Console.WriteLine();
         }
     }
 }

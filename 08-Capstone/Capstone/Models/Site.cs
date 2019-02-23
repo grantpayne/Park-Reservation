@@ -27,5 +27,18 @@ namespace Capstone.Models
 
             return siteString;
         }
+
+        public string ToString(int lengthOfStay)
+        {
+            string accessibleString = (Accessible == true) ? "Yes" : "No";
+
+            string maxRvLength = (MaxRVLength > 0) ? MaxRVLength.ToString() : "N/A";
+
+            string utilityString = (Accessible == true) ? "Yes" : "N/A";
+
+            string siteString = $"{SiteID}  {MaxOccupancy}  {accessibleString} {maxRvLength}  {utilityString}  {lengthOfStay * Cost:C}";
+
+            return siteString;
+        }
     }
 }

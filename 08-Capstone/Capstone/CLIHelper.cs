@@ -96,5 +96,13 @@ namespace Capstone
 
             return sqlDateString;
         }
+
+        public static int GetLengthOfStay(string reqFromDate, string reqToDate)
+        {
+            DateTime fromDate = DateTime.Parse(reqFromDate);
+            DateTime toDate = DateTime.Parse(reqToDate);
+            TimeSpan lengthOfStay = toDate - fromDate;
+            return lengthOfStay.Days;
+        }
     }
 }
