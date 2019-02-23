@@ -16,7 +16,7 @@ namespace Capstone
             {
                 if (numberOfAttempts > 0)
                 {
-                    Console.WriteLine("Invalid input format. Please try again");
+                    Console.WriteLine("Invalid input format. Please try again.\n");
                 }
 
                 Console.Write(message + " ");
@@ -39,7 +39,7 @@ namespace Capstone
             {
                 if (numberOfAttempts > 0)
                 {
-                    Console.WriteLine("Invalid input format. Please try again");
+                    Console.WriteLine("Invalid input format. Please try again.\n");
                 }
 
                 Console.Write(message + " ");
@@ -60,7 +60,7 @@ namespace Capstone
             {
                 if (numberOfAttempts > 0)
                 {
-                    Console.WriteLine("Invalid input format. Please try again");
+                    Console.WriteLine("You must make a selection to continue.  Please try again.\n");
                 }
 
                 Console.Write(message + " ");
@@ -83,7 +83,7 @@ namespace Capstone
 
                 if (numberOfAttempts > 0)
                 {
-                    Console.WriteLine("Invalid input format. Please try again");
+                    Console.WriteLine("Invalid input format. Please try again.\n");
                 }
 
                 Console.Write(message + " ");
@@ -95,6 +95,14 @@ namespace Capstone
             string sqlDateString = sqlDateTime.ToString("yyyy-MM-dd");
 
             return sqlDateString;
+        }
+
+        public static int ExtractMonth(string input)
+        {
+            string result = "";
+            string[] resultArray = input.Split("-");
+            result = resultArray[1];
+            return int.Parse(result);
         }
 
         public static int GetLengthOfStay(string reqFromDate, string reqToDate)

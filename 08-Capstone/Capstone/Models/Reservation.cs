@@ -12,10 +12,13 @@ namespace Capstone.Models
         public DateTime From_date { get; set; }
         public DateTime To_date { get; set; }
         public DateTime Create_date { get; set; }
+        public int Site_number { get; set; }
+        public string Campground { get; set; }
 
-        public override string ToString() //TODO:  Will need to implement this for Bonus showing all reservations out 30 days
+
+        public override string ToString()
         {
-            return "";
+            return $"{From_date.ToShortDateString()}  {To_date.ToShortDateString()}  {Reservation_id}  {Name}  {Site_number}  {Campground}  {Create_date.ToLongDateString()}";
         }
     }
 }

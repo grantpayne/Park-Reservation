@@ -50,6 +50,7 @@ namespace Capstone
                             break;
                         }
                     }
+
                     if (commandNumIsInParkList)
                     {
                         ParkInfoScreen(commandIfNum);
@@ -77,7 +78,7 @@ namespace Capstone
                 {
                     Console.Clear();
                     Console.WriteLine("Park Information Screen\n");
-                    Console.WriteLine(park.ToString());
+                    Console.WriteLine(park.ToString() + "\n");
                     currentWorkingPark = park;
                     break;
                 }
@@ -87,7 +88,8 @@ namespace Capstone
             {
                 int command;
 
-                command = CLIHelper.GetInteger("Select a Command\n1) View campgrounds\n2) Search for reservation\n3) Return to previous screen\nSelection:");
+                command = CLIHelper.GetInteger("Select a Command\n1) View campgrounds\n2) Search for reservation\n3) View all reservations for the next 30 days\n4) Return to previous screen\nSelection:");
+                
 
                 switch (command)
                 {
@@ -95,10 +97,14 @@ namespace Capstone
                         ParkCampgroundScreen(currentWorkingPark);
                         break;
 
-                    case (2):
+                    case (2): //Search reservations by park
                         break;
 
                     case (3):
+                        Display30DaysReservation(parkID);
+                        break;
+
+                    case (4):
                         return;
 
                     default:
@@ -136,6 +142,25 @@ namespace Capstone
             }
         }
 
+        //TODO: Search reservations by park method
+
+        public void Display30DaysReservation(int parkID)
+        {
+            ReservationDAL reservationDAL = new ReservationDAL(DatabaseConnection);
+            //$"{From_date.ToShortDateString()}  {To_date.ToShortDateString()}  {Reservation_id}  {Name}  {Site_number}  {Campground}  {Create_date.ToLongDateString()}";
+            IList<Reservation> reservationList = new List<Reservation>();
+            reservationList = reservationDAL.Get30DayReservations(parkID);
+            Console.Clear();
+            Console.WriteLine("Arrival Date  Departure Date  Reservation ID  Name  Campsite #  Campground  Date Booked\n");
+            foreach (Reservation reservation in reservationList)
+            {
+                Console.WriteLine(reservation.ToString());
+            }
+            Console.WriteLine("\nPress Enter to return to the park information menu.");
+            Console.ReadLine();
+
+        }
+
         public void CampgroundReservationScreen(Park currentWorkingPark)
         {
             DisplayCampgrounds(currentWorkingPark);
@@ -150,7 +175,7 @@ namespace Capstone
 
                 if (!isFirstTry)
                 {
-                    Console.WriteLine("There are no open campsites in the selected timeframe for that campground.\nTry an alternative date range.\n");
+                    Console.WriteLine("\nThere are no open campsites in the selected timeframe for that campground.\nTry an alternative date range.");
                 }
 
                 int campgroundNum = CLIHelper.GetInteger("\nWhich campground (enter 0 to cancel)?");
@@ -178,7 +203,7 @@ namespace Capstone
             ReservationDAL reservationDAL = new ReservationDAL(DatabaseConnection);
             while (true)
             {
-                int campsiteChoice = CLIHelper.GetInteger("Which campground(enter 0 to cancel)?");
+                int campsiteChoice = CLIHelper.GetInteger("\nWhich campsite(enter 0 to cancel)?");
                 if (campsiteChoice == 0)
                 {
                     return;
@@ -214,7 +239,6 @@ namespace Capstone
             {                                                                   
                 Console.WriteLine(campground.ToString());                    
             }
-            Console.WriteLine();
         }
     }
 }
