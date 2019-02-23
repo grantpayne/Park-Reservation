@@ -96,7 +96,7 @@ namespace Capstone
             }
         }
 
-        public void ParkCampgroundScreen(Park currentWorkingPark) //THIS IS BROKE
+        public void ParkCampgroundScreen(Park currentWorkingPark) 
         {
             CampgroundDAL campgroundDAL = new CampgroundDAL(DatabaseConnection);
             IList<Campground> campgroundList = campgroundDAL.GetCampgroundList(currentWorkingPark.ParkID);
@@ -147,7 +147,8 @@ namespace Capstone
 
             SiteDAL siteDal = new SiteDAL(DatabaseConnection);
             IList<Site> unreservedSites = new List<Site>();
-
+            string reqFromDate;
+            string reqToDate;
             bool isFirstTry = true;
             do
             {
@@ -158,8 +159,12 @@ namespace Capstone
                 }
 
                 int campgroundNum = CLIHelper.GetInteger("\nWhich campground (enter 0 to cancel)?");
-                string reqFromDate = CLIHelper.GetDateTime("What is the arrival date? (MM/DD/YYYY):");
-                string reqToDate = CLIHelper.GetDateTime("What is the departure date? (MM/DD/YYYY):");
+                if (campgroundNum == 0)
+                {
+                    return;
+                }
+                reqFromDate = CLIHelper.GetDateTime("What is the arrival date? (MM/DD/YYYY):");
+                reqToDate = CLIHelper.GetDateTime("What is the departure date? (MM/DD/YYYY):");
 
                 unreservedSites = siteDal.GetUnreservedCampsites(reqFromDate, reqToDate, campgroundNum);
 
@@ -173,7 +178,39 @@ namespace Capstone
                 Console.WriteLine(site.ToString());
             }
 
+
+
             ReservationDAL reservationDAL = new ReservationDAL(DatabaseConnection);
+            while(true)
+            {
+                int campsiteChoice = CLIHelper.GetInteger("Which campground(enter 0 to cancel)?");
+                if (campsiteChoice == 0)
+                {
+                    return;
+                }
+
+                foreach (Site site in unreservedSites)
+                {
+                    if (campsiteChoice == site.SiteID)
+                    {
+                        string reservationName = CLIHelper.GetString("What name should the reservation be made under?");
+                        int reservationID = reservationDAL.MakeReservation(reqFromDate, reqToDate, campsiteChoice, reservationName);
+                        Console.WriteLine($"\nThe reservation has been made and the confirmation id is {reservationID}.\nPress Enter to continue.");
+                        Console.ReadLine();
+                        return;
+                    }
+                    
+                }
+
+                Console.WriteLine("Please make a valid selection from the list.");
+
+            }
+            
+
+
+
+
+
         }
     }
 }

@@ -15,7 +15,7 @@ namespace Capstone.Models
         public bool Utilities { get; set; }
         public decimal Cost { get; set; }
 
-        public override string ToString() //TODO Create the ToStringOverride
+        public override string ToString() 
         {
             string accessibleString = (Accessible == true) ? "Yes" : "No";
 

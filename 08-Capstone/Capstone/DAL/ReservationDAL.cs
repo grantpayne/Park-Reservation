@@ -9,7 +9,7 @@ namespace Capstone.DAL
 {
     public class ReservationDAL
     {
-        private const string SQL_MakeReservation = "INSERT INTO reservation(site_id, name, from_date, to_date, create_date) VALUES(@siteID, @name, @fromDate, @toDate, GETDATE()); SELECT CAST(SCOPE_IDENTITY() AS int";
+        private const string SQL_MakeReservation = "INSERT INTO reservation(site_id, name, from_date, to_date, create_date) VALUES(@siteID, @name, @fromDate, @toDate, GETDATE()); SELECT CAST(SCOPE_IDENTITY() AS int);";
         private string connectionString;
         public ReservationDAL(string DatabaseConnection)
         {
@@ -17,7 +17,7 @@ namespace Capstone.DAL
         }
 
 
-        public int MakeReservation(DateTime reqFromDate, DateTime reqToDate, int siteID, string name)
+        public int MakeReservation(string reqFromDate, string reqToDate, int siteID, string name)
         {
             int result;
 
