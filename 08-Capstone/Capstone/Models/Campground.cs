@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Text;
 
 namespace Capstone.Models
@@ -15,7 +16,8 @@ namespace Capstone.Models
 
         public override string ToString() //TODO: Campground ToString Fotmatting
         {
-            string campgroundString = "# ".PadLeft(5) + $"{Campground_id}".PadRight(20) + $"{Name}".PadRight(42) + $"{Open_from_mm}".PadRight(3) + "-  " + $"{Open_to_mm}".PadRight(20) + $"{Daily_fee:C}";
+            DateTimeFormatInfo dtfi = new DateTimeFormatInfo();
+            string campgroundString = "# ".PadLeft(5) + $"{Campground_id}".PadRight(20) + $"{Name}".PadRight(42) + $"{dtfi.GetAbbreviatedMonthName(Open_from_mm)}".PadRight(3) + "-  " + $"{dtfi.GetAbbreviatedMonthName(Open_to_mm)}".PadRight(20) + $"{Daily_fee:C}";
             return campgroundString;
         }
     }

@@ -70,26 +70,28 @@ namespace Capstone
         /*------------------------------------------Park Information Screen--------------------------------------------------*/
         public void ParkInfoScreen(int parkID)
         {
-            string header = "====================== Park Information Screen ======================\n";
-            Park currentWorkingPark = new Park();
-
-            ParkDAL parkDAL = new ParkDAL(DatabaseConnection);
-            IList<Park> parks = parkDAL.GetParkList();
-            foreach (Park park in parks)
-            {
-                if (park.ParkID == parkID)
-                {
-                    Console.Clear();
-                    Console.SetCursorPosition((Console.WindowWidth - header.Length) / 2, Console.CursorTop);
-                    Console.WriteLine(header);
-                    Console.WriteLine(park.ToString() + "\n");
-                    currentWorkingPark = park;
-                    break;
-                }
-            }
+            
 
             while (true)
             {
+                string header = "====================== Park Information Screen ======================\n";
+                Park currentWorkingPark = new Park();
+
+                ParkDAL parkDAL = new ParkDAL(DatabaseConnection);
+                IList<Park> parks = parkDAL.GetParkList();
+                foreach (Park park in parks)
+                {
+                    if (park.ParkID == parkID)
+                    {
+                        Console.Clear();
+                        Console.SetCursorPosition((Console.WindowWidth - header.Length) / 2, Console.CursorTop);
+                        Console.WriteLine(header);
+                        Console.WriteLine(park.ToString() + "\n");
+                        currentWorkingPark = park;
+                        break;
+                    }
+                }
+
                 int command;
 
                 command = CLIHelper.GetInteger("Select a Command\n1) View campgrounds\n2) Search for reservation\n3) View all reservations for the next 30 days\n4) Return to previous screen\nSelection:");
