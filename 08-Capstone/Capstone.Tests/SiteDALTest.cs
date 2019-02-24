@@ -55,7 +55,7 @@ namespace Capstone.Tests
         {
             SiteDAL siteDAL = new SiteDAL(connectionString);
 
-            IList<Site> testSiteList = siteDAL.GetUnreservedCampsites("2025-03-10", "2025-03-11", createdCampgroundID);
+            IList<Site> testSiteList = siteDAL.GetUnreservedCampsites("2025-03-10", "2025-03-11", createdCampgroundID, 0, false, 0, false);
 
             Assert.IsNotNull(testSiteList);
             Assert.AreEqual(1, testSiteList.Count);

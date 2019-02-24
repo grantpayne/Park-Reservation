@@ -154,9 +154,10 @@ namespace Capstone
             List<Site> masterSiteList = new List<Site>();
             CampgroundDAL campgroundDAL = new CampgroundDAL(DatabaseConnection);
             campgroundList = campgroundDAL.GetCampgroundList(parkID);
-            SiteDAL siteDAL = new SiteDAL(DatabaseConnection);
             string reqFromDate;
             string reqToDate;
+
+
             bool isFirstTry = true;
             do
             {
@@ -167,6 +168,9 @@ namespace Capstone
 
                 //TODO: consolidate getDateRange into CLI helper method that returns two string dates once validated
                 reqFromDate = CLIHelper.GetDateTime("What is the arrival date? (MM/DD/YYYY):");
+
+
+
 
                 bool negativeDateRangeAttempted = false;
 
@@ -181,12 +185,30 @@ namespace Capstone
 
                 } while (negativeDateRangeAttempted);
 
+                bool advancedSearch = false;
+                //advanced search variables
+                int minOccupancy = 0;
+                bool accessible = false;
+                int maxRvLength = 0;
+                bool utilities = false;
+
+                advancedSearch = CLIHelper.GetBool("Use Advanced Search (Y/N)?");
+
+                if (advancedSearch)
+                {
+                    minOccupancy = CLIHelper.GetInteger("Minimum Occupancy (Enter 0 to skip):");
+                    accessible = CLIHelper.GetBool("Do you require accessibility features (Y/N)?");
+                    maxRvLength = CLIHelper.GetInteger("What is your RV size (Enter 0 to skip)?");
+                    utilities = CLIHelper.GetBool("Do you require a utility hookup (Y/N)?");
+                }
+
 
 
                 foreach (Campground campground in campgroundList)
                 {
                     IList<Site> campgroundSiteList = new List<Site>();
-                    campgroundSiteList = siteDAL.GetUnreservedCampsites(reqFromDate, reqToDate, campground.Campground_id);
+                    SiteDAL siteDAL = new SiteDAL(DatabaseConnection);
+                    campgroundSiteList = siteDAL.GetUnreservedCampsites(reqFromDate, reqToDate, campground.Campground_id, minOccupancy, accessible, maxRvLength, utilities);
                     foreach (Site site in campgroundSiteList)
                     {
                         site.CampgroundName = campground.Name;
@@ -258,7 +280,6 @@ namespace Capstone
                 campgroundIdList.Add(campground.Campground_id);
             }
 
-            SiteDAL siteDal = new SiteDAL(DatabaseConnection);
             IList<Site> unreservedSites = new List<Site>();
             string reqFromDate;
             string reqToDate;
@@ -298,7 +319,25 @@ namespace Capstone
 
                 } while (negativeDateRangeAttempted);
 
-                unreservedSites = siteDal.GetUnreservedCampsites(reqFromDate, reqToDate, campgroundNum);
+                bool advancedSearch = false;
+                //advanced search variables
+                int minOccupancy = 0;
+                bool accessible = false;
+                int maxRvLength = 0;
+                bool utilities = false;
+
+                advancedSearch = CLIHelper.GetBool("Use Advanced Search (Y/N)?");
+
+                if (advancedSearch)
+                {
+                    minOccupancy = CLIHelper.GetInteger("Minimum Occupancy (Enter 0 to skip):");
+                    accessible = CLIHelper.GetBool("Do you require accessibility features (Y/N)?");
+                    maxRvLength = CLIHelper.GetInteger("What is your RV size (Enter 0 to skip)?");
+                    utilities = CLIHelper.GetBool("Do you require a utility hookup (Y/N)?");
+                }
+
+                SiteDAL siteDal = new SiteDAL(DatabaseConnection);
+                unreservedSites = siteDal.GetUnreservedCampsites(reqFromDate, reqToDate, campgroundNum, minOccupancy, accessible, maxRvLength, utilities);
 
                 isFirstTry = false;
 
