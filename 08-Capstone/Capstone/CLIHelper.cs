@@ -77,20 +77,32 @@ namespace Capstone
             string userInput = String.Empty;
             int numberOfAttempts = 0;
             DateTime sqlDateTime;
+            bool isParsed = true;
+            bool isNotInPast = true;
 
             do
             {
 
-                if (numberOfAttempts > 0)
+                if (numberOfAttempts > 0 && !isParsed)
                 {
                     Console.WriteLine("Invalid input format. Please try again.\n");
+
                 }
+                if (!isNotInPast && isParsed)
+                {
+                    Console.WriteLine("Please enter a date that is in the future.");
+                }
+
+                isParsed = false;
+                isNotInPast = false;
 
                 Console.Write(message + " ");
                 userInput = Console.ReadLine();
                 numberOfAttempts++;
+                isParsed = DateTime.TryParse(userInput, out sqlDateTime);
+                isNotInPast = (sqlDateTime > DateTime.Now);
 
-            } while (!DateTime.TryParse(userInput, out sqlDateTime));
+            } while (!isParsed || !isNotInPast);
 
             string sqlDateString = sqlDateTime.ToString("yyyy-MM-dd");
 

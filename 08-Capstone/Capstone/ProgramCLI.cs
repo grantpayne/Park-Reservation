@@ -165,13 +165,32 @@ namespace Capstone
                     Console.WriteLine("\nThere are no open campsites in the selected timeframe for that park.\nTry an alternative date range.");
                 }
 
+                //TODO: consolidate getDateRange into CLI helper method that returns two string dates once validated
                 reqFromDate = CLIHelper.GetDateTime("What is the arrival date? (MM/DD/YYYY):");
-                reqToDate = CLIHelper.GetDateTime("What is the departure date? (MM/DD/YYYY):");
+
+                bool negativeDateRangeAttempted = false;
+
+                do
+                {
+                    if (negativeDateRangeAttempted)
+                    {
+                        Console.WriteLine("Departure date must be after arrival date. Please try again.\n");
+                    }
+                    reqToDate = CLIHelper.GetDateTime("What is the departure date? (MM/DD/YYYY):");
+                    negativeDateRangeAttempted = DateTime.Parse(reqToDate) <= DateTime.Parse(reqFromDate);
+
+                } while (negativeDateRangeAttempted);
+
+
 
                 foreach (Campground campground in campgroundList)
                 {
                     IList<Site> campgroundSiteList = new List<Site>();
                     campgroundSiteList = siteDAL.GetUnreservedCampsites(reqFromDate, reqToDate, campground.Campground_id);
+                    foreach (Site site in campgroundSiteList)
+                    {
+                        site.CampgroundName = campground.Name;
+                    }
                     masterSiteList.AddRange(campgroundSiteList);
                 }
 
@@ -181,11 +200,37 @@ namespace Capstone
             int lengthOfStay = CLIHelper.GetLengthOfStay(reqFromDate, reqToDate);
 
             Console.WriteLine("Results Matching Your Search Criteria\nCampground  Site No.  Max Occup.  Accssible?  Max RV Length  Utility  Cost");
-            Console.WriteLine("Header");
             foreach (Site site in masterSiteList)
             {
-                Console.WriteLine($"{site.CampgroundName}  " + site.ToString(lengthOfStay));
+                Console.WriteLine(site.ToString(lengthOfStay));
             }
+
+            ReservationDAL reservationDAL = new ReservationDAL(DatabaseConnection);
+            while (true)
+            {
+                int campsiteChoice = CLIHelper.GetInteger("\nPlease select a campsite ID from the list (enter 0 to cancel)?");
+                if (campsiteChoice == 0)
+                {
+                    return;
+                }
+
+                foreach (Site site in masterSiteList)
+                {
+                    if (campsiteChoice == site.SiteID)
+                    {
+                        string reservationName = CLIHelper.GetString("What name should the reservation be made under?");
+                        int reservationID = reservationDAL.MakeReservation(reqFromDate, reqToDate, campsiteChoice, reservationName);
+                        Console.WriteLine($"\nThe reservation has been made and the confirmation id is {reservationID}.\nPress Enter to continue.");
+                        Console.ReadLine();
+                        return;
+                    }
+
+                }
+
+                Console.WriteLine("Please make a valid campsite ID selection from the list.");
+
+            }
+
         }
 
         public void Display30DaysReservation(int parkID)
@@ -206,7 +251,12 @@ namespace Capstone
 
         public void CampgroundReservationScreen(Park currentWorkingPark)
         {
-            DisplayCampgrounds(currentWorkingPark);
+            IList<Campground> campgroundList = DisplayCampgrounds(currentWorkingPark);
+            List<int> campgroundIdList = new List<int>();
+            foreach (Campground campground in campgroundList)
+            {
+                campgroundIdList.Add(campground.Campground_id);
+            }
 
             SiteDAL siteDal = new SiteDAL(DatabaseConnection);
             IList<Site> unreservedSites = new List<Site>();
@@ -221,13 +271,32 @@ namespace Capstone
                     Console.WriteLine("\nThere are no open campsites in the selected timeframe for that campground.\nTry an alternative date range.");
                 }
 
-                int campgroundNum = CLIHelper.GetInteger("\nWhich campground (enter 0 to cancel)?");
-                if (campgroundNum == 0)
+                int campgroundNum;
+
+                do
                 {
-                    return;
-                }
+                    campgroundNum = CLIHelper.GetInteger("\nPlease select a campground ID from the list (enter 0 to cancel)?");
+                    if (campgroundNum == 0)
+                    {
+                        return;
+                    }
+                } while (!campgroundIdList.Contains(campgroundNum));
+
+
                 reqFromDate = CLIHelper.GetDateTime("What is the arrival date? (MM/DD/YYYY):");
-                reqToDate = CLIHelper.GetDateTime("What is the departure date? (MM/DD/YYYY):");
+
+                bool negativeDateRangeAttempted = false;
+
+                do
+                {
+                    if (negativeDateRangeAttempted)
+                    {
+                        Console.WriteLine("Departure date must be after arrival date. Please try again.\n");
+                    }
+                    reqToDate = CLIHelper.GetDateTime("What is the departure date? (MM/DD/YYYY):");
+                    negativeDateRangeAttempted = DateTime.Parse(reqToDate) <= DateTime.Parse(reqFromDate);
+
+                } while (negativeDateRangeAttempted);
 
                 unreservedSites = siteDal.GetUnreservedCampsites(reqFromDate, reqToDate, campgroundNum);
 
@@ -237,7 +306,7 @@ namespace Capstone
 
             int lengthOfStay = CLIHelper.GetLengthOfStay(reqFromDate, reqToDate);
 
-            Console.WriteLine("Results Matching Your Search Criteria\nSite No.  Max Occup.  Accssible?  Max RV Length  Utility  Cost");
+            Console.WriteLine("Results Matching Your Search Criteria\nSite No.  Max Occup.  Accessible?  Max RV Length  Utility  Cost");
             foreach (Site site in unreservedSites)
             {
                 Console.WriteLine(site.ToString(lengthOfStay));
@@ -246,7 +315,7 @@ namespace Capstone
             ReservationDAL reservationDAL = new ReservationDAL(DatabaseConnection);
             while (true)
             {
-                int campsiteChoice = CLIHelper.GetInteger("\nWhich campsite(enter 0 to cancel)?");
+                int campsiteChoice = CLIHelper.GetInteger("\nPlease select a campsite ID from the list (enter 0 to cancel)?");
                 if (campsiteChoice == 0)
                 {
                     return;
@@ -265,13 +334,13 @@ namespace Capstone
 
                 }
 
-                Console.WriteLine("Please make a valid selection from the list.");
+                Console.WriteLine("Please make a valid campsite ID selection from the list.");
 
             }
 
         }
 
-        public void DisplayCampgrounds(Park currentWorkingPark)
+        public IList<Campground> DisplayCampgrounds(Park currentWorkingPark)
         {
             string header = "====================== Park Campgrounds ======================\n";
             string subHeader = $"{currentWorkingPark.Name} National Park";
@@ -290,6 +359,8 @@ namespace Capstone
             {
                 Console.WriteLine(campground.ToString());
             }
+
+            return campgroundList;
         }
     }
 }
