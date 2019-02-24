@@ -6,8 +6,10 @@ using Capstone.Models;
 
 namespace Capstone
 {
+
     public class ProgramCLI
     {
+        /*------------------------------------------------------Main Menu--------------------------------------------------*/
         const string DatabaseConnection = @"Data Source=.\sqlexpress;Initial Catalog=NationalParkReservation;Integrated Security=True";
         const string Command_Quit = "Q";
 
@@ -15,12 +17,13 @@ namespace Capstone
         {
             while (true)
             {
+                string parkSelectPrompt = "====================== Select a Park for Further Details ======================\n";
                 Console.Clear();
-
+                Console.SetCursorPosition((Console.WindowWidth - parkSelectPrompt.Length) / 2, Console.CursorTop);
+                Console.WriteLine(parkSelectPrompt);
                 ParkDAL parkDAL = new ParkDAL(DatabaseConnection);
                 IList<Park> parkList = new List<Park>();
                 parkList = parkDAL.GetParkList();
-                Console.WriteLine("Select a Park for Further Details\n");
                 foreach (Park park in parkList)
                 {
                     Console.WriteLine($"{park.ParkID}) {park.Name}");
@@ -61,13 +64,13 @@ namespace Capstone
                         Console.ReadLine();
                     }
                 }
-
-
             }
         }
 
+        /*------------------------------------------Park Information Screen--------------------------------------------------*/
         public void ParkInfoScreen(int parkID)
         {
+            string header = "====================== Park Information Screen ======================\n";
             Park currentWorkingPark = new Park();
 
             ParkDAL parkDAL = new ParkDAL(DatabaseConnection);
@@ -77,7 +80,8 @@ namespace Capstone
                 if (park.ParkID == parkID)
                 {
                     Console.Clear();
-                    Console.WriteLine("Park Information Screen\n");
+                    Console.SetCursorPosition((Console.WindowWidth - header.Length) / 2, Console.CursorTop);
+                    Console.WriteLine(header);
                     Console.WriteLine(park.ToString() + "\n");
                     currentWorkingPark = park;
                     break;
@@ -89,7 +93,7 @@ namespace Capstone
                 int command;
 
                 command = CLIHelper.GetInteger("Select a Command\n1) View campgrounds\n2) Search for reservation\n3) View all reservations for the next 30 days\n4) Return to previous screen\nSelection:");
-                
+
 
                 switch (command)
                 {
@@ -269,14 +273,22 @@ namespace Capstone
 
         public void DisplayCampgrounds(Park currentWorkingPark)
         {
+            string header = "====================== Park Campgrounds ======================\n";
+            string subHeader = $"{currentWorkingPark.Name} National Park";
+            string campgroundHeader = "Campground ID".PadRight(25) + "Campground Name".PadRight(40) + "Open Through".PadRight(25) + "Price per day";
+
             CampgroundDAL campgroundDAL = new CampgroundDAL(DatabaseConnection);
             IList<Campground> campgroundList = campgroundDAL.GetCampgroundList(currentWorkingPark.ParkID);
+
             Console.Clear();
-            Console.WriteLine("Park campgrounds");
-            Console.WriteLine($"{currentWorkingPark.Name} National Park");       
-            foreach (Campground campground in campgroundList)                   
-            {                                                                   
-                Console.WriteLine(campground.ToString());                    
+            Console.SetCursorPosition((Console.WindowWidth - header.Length) / 2, Console.CursorTop);
+            Console.WriteLine(header);
+            Console.WriteLine(subHeader);
+            Console.WriteLine(campgroundHeader);
+
+            foreach (Campground campground in campgroundList)
+            {
+                Console.WriteLine(campground.ToString());
             }
         }
     }

@@ -37,7 +37,7 @@ namespace Capstone.Models
 
             string utilityString = (Accessible == true) ? "Yes" : "N/A";
 
-            string siteString = $"{SiteID}  {MaxOccupancy}  {accessibleString}  {maxRvLength}  {utilityString}  {lengthOfStay * Cost:C}";
+            string siteString = $"{SiteID}".PadRight(10).PadLeft(5) + $"{MaxOccupancy}".PadRight(10) + $"{accessibleString}".PadRight(10) + $"{maxRvLength}".PadRight(10) + $"{utilityString}".PadRight(10) + $"{lengthOfStay * Cost:C}";
 
             return siteString;
         }

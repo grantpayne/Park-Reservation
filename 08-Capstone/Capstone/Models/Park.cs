@@ -9,14 +9,14 @@ namespace Capstone.Models
         public int ParkID { get; set; }
         public string Name { get; set; }
         public string Location { get; set; }
-        public DateTime DateEstablished { get; set; } //TODO double check this data type
+        public DateTime DateEstablished { get; set; }
         public int Area { get; set; }
         public int Visitors { get; set; }
         public string Description { get; set; }
 
         public override string ToString() //TODO fill out the override string
         {
-            string parkString = $"{Name} National Park\nLocation: {Location}\nEstablished: {DateEstablished}\nArea: {Area} Acres\nAnnual Visitors: {Visitors}\n\n{Description}";
+            string parkString = $"{Name} National Park\nLocation: {Location}\nEstablished: {DateEstablished.ToShortDateString()}\nArea: {Area} Acres\nAnnual Visitors: {Visitors}\n\n{Description}";
             return parkString;
         }
     }
