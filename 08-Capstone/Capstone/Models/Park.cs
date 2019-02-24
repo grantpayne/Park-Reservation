@@ -16,7 +16,7 @@ namespace Capstone.Models
 
         public override string ToString() 
         {
-            string parkString = $"{Name} National Park\nLocation: {Location}\nEstablished: {DateEstablished.ToShortDateString()}\nArea: {Area} Acres\nAnnual Visitors: {Visitors}\n\n{Description}";
+            string parkString = $"Location: {Location}\nEstablished: {DateEstablished.ToShortDateString()}\nArea: {Area} Acres\nAnnual Visitors: {Visitors}\n\n{Description}";
             return parkString;
         }
     }

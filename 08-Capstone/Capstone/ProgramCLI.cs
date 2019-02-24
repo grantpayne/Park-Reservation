@@ -9,7 +9,6 @@ namespace Capstone
 
     public class ProgramCLI
     {
-        /*------------------------------------------------------Main Menu--------------------------------------------------*/
         const string DatabaseConnection = @"Data Source=.\sqlexpress;Initial Catalog=NationalParkReservation;Integrated Security=True";
         const string Command_Quit = "Q";
 
@@ -70,11 +69,9 @@ namespace Capstone
         /*------------------------------------------Park Information Screen--------------------------------------------------*/
         public void ParkInfoScreen(int parkID)
         {
-            
-
             while (true)
             {
-                string header = "====================== Park Information Screen ======================\n";
+                string header = "";
                 Park currentWorkingPark = new Park();
 
                 ParkDAL parkDAL = new ParkDAL(DatabaseConnection);
@@ -83,18 +80,20 @@ namespace Capstone
                 {
                     if (park.ParkID == parkID)
                     {
+                        currentWorkingPark = park;
                         Console.Clear();
+                        header += $"====================== {currentWorkingPark.Name} National Park Information ======================";
                         Console.SetCursorPosition((Console.WindowWidth - header.Length) / 2, Console.CursorTop);
                         Console.WriteLine(header);
                         Console.WriteLine(park.ToString() + "\n");
-                        currentWorkingPark = park;
                         break;
                     }
                 }
 
                 int command;
 
-                command = CLIHelper.GetInteger("Select a Command\n1) View campgrounds\n2) Search for reservation\n3) View all reservations for the next 30 days\n4) Return to previous screen\nSelection:");
+                Console.WriteLine("Select a Command\n----------------\n1) View campgrounds\n2) Search for reservation\n3) View all reservations for the next 30 days\n4) Return to previous screen\n");
+                command = CLIHelper.GetInteger("Selection:");
 
 
                 switch (command)
@@ -130,7 +129,8 @@ namespace Capstone
             {
                 int command;
 
-                command = CLIHelper.GetInteger("\nSelect a Command\n1) Search for available reservation\n2) Return to previous screen\nSelection:");
+                Console.WriteLine("\nSelect a Command\n----------------\n1) Search for available reservation\n2) Return to previous screen\n");
+                command = CLIHelper.GetInteger("Selection:");
 
                 switch (command)
                 {
@@ -219,7 +219,8 @@ namespace Capstone
 
             int lengthOfStay = CLIHelper.GetLengthOfStay(reqFromDate, reqToDate);
 
-            Console.WriteLine("Results Matching Your Search Criteria\nCampground  Site No.  Max Occup.  Accssible?  Max RV Length  Utility  Cost");
+            Console.Clear();
+            Console.WriteLine($"Results Matching Your Search Criteria\n" + "Campground".PadRight(20) + "Site No.".PadRight(12) + "Max Occup." + "Accessible?" + "Max RV Length" + "Utility" + "Cost"); //TODO Finish this
             foreach (Site site in masterSiteList)
             {
                 Console.WriteLine(site.ToString(lengthOfStay));
@@ -255,11 +256,19 @@ namespace Capstone
 
         public void Display30DaysReservation(int parkID)
         {
+            string header = "====================== Reservations in Next 30 Days ======================\n";
             ReservationDAL reservationDAL = new ReservationDAL(DatabaseConnection);
             IList<Reservation> reservationList = new List<Reservation>();
             reservationList = reservationDAL.Get30DayReservations(parkID);
             Console.Clear();
-            Console.WriteLine("Arrival Date  Departure Date  Reservation ID  Name  Campsite #  Campground  Date Booked\n");
+            Console.SetCursorPosition((Console.WindowWidth - header.Length) / 2, Console.CursorTop);
+            Console.WriteLine(header);
+            Console.WriteLine(" Arrival".PadRight(12) + "Departure".PadRight(14) + "Res.ID".PadRight(20) + "Name".PadRight(16) + "Campsite #".PadRight(13) + "Campground".PadRight(26) + "Date Booked\n");
+
+            if (reservationList.Count == 0)
+            {
+                Console.WriteLine("There are currently no reservations booked for the next 30 days.");
+            }
             foreach (Reservation reservation in reservationList)
             {
                 Console.WriteLine(reservation.ToString());
@@ -343,7 +352,8 @@ namespace Capstone
 
             int lengthOfStay = CLIHelper.GetLengthOfStay(reqFromDate, reqToDate);
 
-            Console.WriteLine("Results Matching Your Search Criteria\nSite No.  Max Occup.  Accessible?  Max RV Length  Utility  Cost");
+            Console.Clear();
+            Console.WriteLine($"Results Matching Your Search Criteria\n" + "Site No." + "Max Occup." + "Accessible?" + "Max RV Length" + "Utility" + "Cost"); //Finish this
             foreach (Site site in unreservedSites)
             {
                 Console.WriteLine(site.ToString(lengthOfStay));
@@ -379,9 +389,8 @@ namespace Capstone
 
         public IList<Campground> DisplayCampgrounds(Park currentWorkingPark)
         {
-            string header = "====================== Park Campgrounds ======================\n";
-            string subHeader = $"{currentWorkingPark.Name} National Park";
-            string campgroundHeader = "Campground ID".PadRight(25) + "Campground Name".PadRight(40) + "Open Through".PadRight(25) + "Price per day";
+            string header = $"====================== {currentWorkingPark.Name} National Park Campgrounds ======================\n";
+            string campgroundHeader = "Campground ID".PadRight(25) + "Campground Name".PadRight(40) + "Open Through".PadRight(25) + "Price per day\n";
 
             CampgroundDAL campgroundDAL = new CampgroundDAL(DatabaseConnection);
             IList<Campground> campgroundList = campgroundDAL.GetCampgroundList(currentWorkingPark.ParkID);
@@ -389,7 +398,6 @@ namespace Capstone
             Console.Clear();
             Console.SetCursorPosition((Console.WindowWidth - header.Length) / 2, Console.CursorTop);
             Console.WriteLine(header);
-            Console.WriteLine(subHeader);
             Console.WriteLine(campgroundHeader);
 
             foreach (Campground campground in campgroundList)
