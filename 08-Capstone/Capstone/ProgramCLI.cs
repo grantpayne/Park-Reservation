@@ -149,7 +149,6 @@ namespace Capstone
             }
         }
 
-        //TODO: Search reservations by park method
         public void ParkWideAvailabilitySearch(int parkID)
         {
             IList<Campground> campgroundList = new List<Campground>();
@@ -170,9 +169,6 @@ namespace Capstone
 
                 //TODO: consolidate getDateRange into CLI helper method that returns two string dates once validated
                 reqFromDate = CLIHelper.GetDateTime("What is the arrival date? (MM/DD/YYYY):");
-
-
-
 
                 bool negativeDateRangeAttempted = false;
 
