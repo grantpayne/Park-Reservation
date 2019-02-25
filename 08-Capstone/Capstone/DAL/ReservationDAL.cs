@@ -77,7 +77,7 @@ namespace Capstone.DAL
             catch (Exception)
             {
 
-                throw;
+                Console.WriteLine("The database is not accessible. Please yell at Grant or Patrick!");
             }
             return reservationList;
         }

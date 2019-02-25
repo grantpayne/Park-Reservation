@@ -52,7 +52,7 @@ namespace Capstone.DAL
             catch (Exception ex)
             {
 
-                Console.WriteLine("There was an error connecting/retrieving to the database"); //TODO: refine error handling
+                Console.WriteLine("The database is not accessible. Please yell at Grant or Patrick!"); //TODO: refine error handling
             }
 
             return campgroundList;
