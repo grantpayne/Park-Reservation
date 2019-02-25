@@ -10,6 +10,7 @@ namespace Capstone
     public class ProgramCLI
     {
         const string DatabaseConnection = @"Data Source=.\sqlexpress;Initial Catalog=NationalParkReservation;Integrated Security=True";
+
         const string Command_Quit = "Q";
 
         public void RunCLI()
@@ -17,12 +18,19 @@ namespace Capstone
             while (true)
             {
                 string parkSelectPrompt = "====================== Select a Park for Further Details ======================\n";
+
+                string validSelectionError = "Please make a valid selection from the menu. Press Enter to try again.";
+
+                int commandIfNum;
+
                 Console.Clear();
                 Console.SetCursorPosition((Console.WindowWidth - parkSelectPrompt.Length) / 2, Console.CursorTop);
                 Console.WriteLine(parkSelectPrompt);
+
                 ParkDAL parkDAL = new ParkDAL(DatabaseConnection);
                 IList<Park> parkList = new List<Park>();
                 parkList = parkDAL.GetParkList();
+
                 foreach (Park park in parkList)
                 {
                     Console.WriteLine($"{park.ParkID}) {park.Name}");
@@ -30,14 +38,14 @@ namespace Capstone
                 Console.WriteLine($"{Command_Quit}) Quit\n");
 
                 string command = CLIHelper.GetString("Selection:").ToUpper();
-                int commandIfNum;
+
                 if (command == Command_Quit)
                 {
                     return;
                 }
                 else if (!int.TryParse(command, out commandIfNum))
                 {
-                    Console.WriteLine("Please make a valid selection from the menu. Press Enter to try again.");
+                    Console.WriteLine(validSelectionError);
                     Console.ReadLine();
                     continue;
                 }
@@ -59,7 +67,7 @@ namespace Capstone
                     }
                     else
                     {
-                        Console.WriteLine("Please make a valid selection from the menu. Press Enter to try again.");
+                        Console.WriteLine(validSelectionError);
                         Console.ReadLine();
                     }
                 }
@@ -183,8 +191,9 @@ namespace Capstone
 
                 } while (negativeDateRangeAttempted);
 
+
+                /*----------------------------------------------------Advanced Search------------------------------------------------------*/
                 bool advancedSearch = false;
-                //advanced search variables
                 int minOccupancy = 0;
                 bool accessible = false;
                 int maxRvLength = 0;
@@ -199,7 +208,7 @@ namespace Capstone
                     maxRvLength = CLIHelper.GetInteger("What is your RV size (Enter 0 to skip)?");
                     utilities = CLIHelper.GetBool("Do you require a utility hookup (Y/N)?");
                 }
-
+                /*---------------------------------------------------End of Advanced Search-------------------------------------------------*/
 
 
                 foreach (Campground campground in campgroundList)
@@ -227,6 +236,7 @@ namespace Capstone
             }
 
             ReservationDAL reservationDAL = new ReservationDAL(DatabaseConnection);
+
             while (true)
             {
                 int campsiteChoice = CLIHelper.GetInteger("\nPlease select your desired Site # from the list (enter 0 to cancel)?");
@@ -254,80 +264,116 @@ namespace Capstone
 
         }
 
-        public void Display30DaysReservation(int parkID)
+        public void Display30DaysReservation(int parkID) //Takes a park ID and displays all reservations for the next 30 days starting at current time
         {
-            string header = "====================== Reservations in Next 30 Days ======================\n";
+
+            string headerString = "====================== Reservations in Next 30 Days ======================\n";
+            string searchResultString = " Arrival".PadRight(12) + "Departure".PadRight(14) + "Res.ID".PadRight(20) + "Name".PadRight(16) + "Campsite #".PadRight(13) + "Campground".PadRight(26) + "Date Booked\n";
+            string returnString = "\nPress Enter to return to the park information menu.";
+            string noReservationString = "There are currently no reservations booked for the next 30 days.";
+
             ReservationDAL reservationDAL = new ReservationDAL(DatabaseConnection);
             IList<Reservation> reservationList = new List<Reservation>();
+
             reservationList = reservationDAL.Get30DayReservations(parkID);
+
             Console.Clear();
-            Console.SetCursorPosition((Console.WindowWidth - header.Length) / 2, Console.CursorTop);
-            Console.WriteLine(header);
-            Console.WriteLine(" Arrival".PadRight(12) + "Departure".PadRight(14) + "Res.ID".PadRight(20) + "Name".PadRight(16) + "Campsite #".PadRight(13) + "Campground".PadRight(26) + "Date Booked\n");
+            Console.SetCursorPosition((Console.WindowWidth - headerString.Length) / 2, Console.CursorTop); //Writes header string to center of console
+            Console.WriteLine(headerString);
+            Console.WriteLine(searchResultString);
 
             if (reservationList.Count == 0)
             {
-                Console.WriteLine("There are currently no reservations booked for the next 30 days.");
+                Console.WriteLine(noReservationString);
             }
+
             foreach (Reservation reservation in reservationList)
             {
                 Console.WriteLine(reservation.ToString());
             }
-            Console.WriteLine("\nPress Enter to return to the park information menu.");
+
+            Console.WriteLine(returnString);
             Console.ReadLine();
 
         }
 
         public void CampgroundReservationScreen(Park currentWorkingPark)
         {
+
+            string campgroundSelectionPrompt = "\nPlease select a 'Campground' ID from the list (enter 0 to cancel)?";
+
+            string campsiteSelectionPrompt = "\nPlease select a 'Campsite ID' from the list (enter 0 to cancel)?";
+
+            string enterValidIDError = "Please make a valid 'Campsite ID' selection from the list.";
+
+            string arrivalDatePrompt = "What is the arrival date? (MM/DD/YYYY):";
+
+            string departureDatePrompt = "What is the departure date? (MM/DD/YYYY):";
+
+            string negativeDateRangeError = "Departure date must be after arrival date. Please try again.\n";
+
+            string noResultsInRangeError = "\nThere are no open campsites in the selected timeframe for that campground.\nTry an alternative date range.";
+
+            string reservationNamePrompt = "What name should the reservation be made under?";
+
+            string searchResult = $"Results Matching Your Search Criteria\n\n" + "Site #".PadRight(9) + "Max Occup.".PadRight(11) + "Accessible?".PadRight(12) + "RV Size".PadRight(12) + "Utility".PadRight(15) + "Cost\n";
+
+            string reqFromDate;             //User desired arrival date
+
+            string reqToDate;               //User desired departure date
+
+            bool isFirstTry = true;         //Used to track first run through campground selection process
+
+
             IList<Campground> campgroundList = DisplayCampgrounds(currentWorkingPark);
             List<int> campgroundIdList = new List<int>();
+
             foreach (Campground campground in campgroundList)
             {
                 campgroundIdList.Add(campground.Campground_id);
             }
 
             IList<Site> unreservedSites = new List<Site>();
-            string reqFromDate;
-            string reqToDate;
-            bool isFirstTry = true;
+
             do
             {
+                bool negativeDateRangeAttempted = false;
 
                 if (!isFirstTry)
                 {
-                    Console.WriteLine("\nThere are no open campsites in the selected timeframe for that campground.\nTry an alternative date range.");
+                    Console.WriteLine(noResultsInRangeError);
                 }
 
-                int campgroundNum;
+                int campgroundNum;          //Stores DB value for campgroundID
 
                 do
                 {
-                    campgroundNum = CLIHelper.GetInteger("\nPlease select a campground ID from the list (enter 0 to cancel)?");
+                    campgroundNum = CLIHelper.GetInteger(campgroundSelectionPrompt); //CLIHelper deals with incorrect inputs, do while just waits for proper input or exit condition
+
                     if (campgroundNum == 0)
                     {
                         return;
                     }
+
                 } while (!campgroundIdList.Contains(campgroundNum));
 
-
-                reqFromDate = CLIHelper.GetDateTime("What is the arrival date? (MM/DD/YYYY):");
-
-                bool negativeDateRangeAttempted = false;
+                reqFromDate = CLIHelper.GetDateTime(arrivalDatePrompt); //Arrival date is necessarry and CLIHelper handles errors, so no loop necessary
 
                 do
                 {
                     if (negativeDateRangeAttempted)
                     {
-                        Console.WriteLine("Departure date must be after arrival date. Please try again.\n");
+                        Console.WriteLine(negativeDateRangeError);
                     }
-                    reqToDate = CLIHelper.GetDateTime("What is the departure date? (MM/DD/YYYY):");
+
+                    reqToDate = CLIHelper.GetDateTime(departureDatePrompt);
+
                     negativeDateRangeAttempted = DateTime.Parse(reqToDate) <= DateTime.Parse(reqFromDate);
 
                 } while (negativeDateRangeAttempted);
 
-                bool advancedSearch = false;
-                //advanced search variables
+                /*----------------------------------------------------Advanced Search------------------------------------------------------*/
+                bool advancedSearch = false;  //TODO Any way to move this to its own method?
                 int minOccupancy = 0;
                 bool accessible = false;
                 int maxRvLength = 0;
@@ -342,6 +388,7 @@ namespace Capstone
                     maxRvLength = CLIHelper.GetInteger("What is your RV size (Enter 0 to skip)?");
                     utilities = CLIHelper.GetBool("Do you require a utility hookup (Y/N)?");
                 }
+                /*---------------------------------------------------End of Advanced Search-------------------------------------------------*/
 
                 SiteDAL siteDal = new SiteDAL(DatabaseConnection);
                 unreservedSites = siteDal.GetUnreservedCampsites(reqFromDate, reqToDate, campgroundNum, minOccupancy, accessible, maxRvLength, utilities);
@@ -353,16 +400,19 @@ namespace Capstone
             int lengthOfStay = CLIHelper.GetLengthOfStay(reqFromDate, reqToDate);
 
             Console.Clear();
-            Console.WriteLine($"Results Matching Your Search Criteria\n" + "Site No." + "Max Occup." + "Accessible?" + "Max RV Length" + "Utility" + "Cost"); //Finish this
+            Console.WriteLine(searchResult);
+
             foreach (Site site in unreservedSites)
             {
                 Console.WriteLine(site.ToString(lengthOfStay, false));
             }
 
             ReservationDAL reservationDAL = new ReservationDAL(DatabaseConnection);
+
             while (true)
             {
-                int campsiteChoice = CLIHelper.GetInteger("\nPlease select a campsite ID from the list (enter 0 to cancel)?");
+                int campsiteChoice = CLIHelper.GetInteger(campsiteSelectionPrompt);
+
                 if (campsiteChoice == 0)
                 {
                     return;
@@ -372,32 +422,33 @@ namespace Capstone
                 {
                     if (campsiteChoice == site.SiteID)
                     {
-                        string reservationName = CLIHelper.GetString("What name should the reservation be made under?");
+                        string reservationName = CLIHelper.GetString(reservationNamePrompt);
                         int reservationID = reservationDAL.MakeReservation(reqFromDate, reqToDate, campsiteChoice, reservationName);
-                        Console.WriteLine($"\nThe reservation has been made and the confirmation id is {reservationID}.\nPress Enter to continue.");
+                        Console.WriteLine($"\nThe reservation has been made and the confirmation id is {reservationID}.\nPress Enter to continue."); //Can't move this yet
                         Console.ReadLine();
                         return;
                     }
 
                 }
 
-                Console.WriteLine("Please make a valid campsite ID selection from the list.");
+                Console.WriteLine(enterValidIDError);
 
             }
 
         }
 
-        public IList<Campground> DisplayCampgrounds(Park currentWorkingPark)
+        public IList<Campground> DisplayCampgrounds(Park currentWorkingPark) //Displays a list of campgrounds within the currently selected park
         {
-            string header = $"====================== {currentWorkingPark.Name} National Park Campgrounds ======================\n";
+            string headerString = $"====================== {currentWorkingPark.Name} National Park Campgrounds ======================\n";
+
             string campgroundHeader = "Campground ID".PadRight(25) + "Campground Name".PadRight(40) + "Open Through".PadRight(25) + "Price per day\n";
 
             CampgroundDAL campgroundDAL = new CampgroundDAL(DatabaseConnection);
             IList<Campground> campgroundList = campgroundDAL.GetCampgroundList(currentWorkingPark.ParkID);
 
             Console.Clear();
-            Console.SetCursorPosition((Console.WindowWidth - header.Length) / 2, Console.CursorTop);
-            Console.WriteLine(header);
+            Console.SetCursorPosition((Console.WindowWidth - headerString.Length) / 2, Console.CursorTop); //Prints headerString to center of console
+            Console.WriteLine(headerString);
             Console.WriteLine(campgroundHeader);
 
             foreach (Campground campground in campgroundList)
