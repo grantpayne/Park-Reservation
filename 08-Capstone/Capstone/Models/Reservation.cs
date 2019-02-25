@@ -18,7 +18,22 @@ namespace Capstone.Models
 
         public override string ToString()
         {
-            string result = string.Format("{0, 10} - {1, 10} {2, 9} {3, 30} {4, 10} {5, 25} {6, 11}", From_date.ToShortDateString().PadRight(10), To_date.ToShortDateString().PadRight(10), Reservation_id.ToString().PadRight(6), Name.PadRight(30), Site_number.ToString().PadRight(5), Campground.PadRight(25), Create_date.ToShortDateString().PadRight(10));
+            string result = string.Format("{0, 10} - {1, 10} {2, 9} {3, 30} {4, 10} {5, 25} {6, 11}", 
+
+                From_date.ToShortDateString().PadRight(10),                                             //{0}
+
+                To_date.ToShortDateString().PadRight(10),                                               //{1}
+
+                Reservation_id.ToString().PadRight(6),                                                  //{2}
+
+                Name.PadRight(30),                                                                      //{3}
+
+                Site_number.ToString().PadRight(5),                                                     //{4}
+
+                Campground.PadRight(25),                                                                //{5}
+
+                Create_date.ToShortDateString().PadRight(10));                                          //{6}
+
             return result;
         }
     }

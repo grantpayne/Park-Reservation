@@ -30,18 +30,22 @@ namespace Capstone.DAL
             {
                 SQL_GetUnreservedCampsitesByCampground += SQL_Advanced_Occupancy;
             }
+
             if (accessibility)
             {
                 SQL_GetUnreservedCampsitesByCampground += SQL_Advanced_Accessibility;
             }
+
             if (maxRvLength > 0)
             {
                 SQL_GetUnreservedCampsitesByCampground += SQL_Advanced_RvLength;
             }
+
             if (utilities)
             {
                 SQL_GetUnreservedCampsitesByCampground += SQL_Advanced_Utilities;
             }
+
             IList<Site> resultList = new List<Site>();
             int reqFromMM = CLIHelper.ExtractMonth(reqFromDate);
             int reqToMM = CLIHelper.ExtractMonth(reqToDate);

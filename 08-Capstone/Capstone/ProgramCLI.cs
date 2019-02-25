@@ -356,7 +356,7 @@ namespace Capstone
             Console.WriteLine($"Results Matching Your Search Criteria\n" + "Site No." + "Max Occup." + "Accessible?" + "Max RV Length" + "Utility" + "Cost"); //Finish this
             foreach (Site site in unreservedSites)
             {
-                Console.WriteLine(site.ToString(lengthOfStay));
+                Console.WriteLine(site.SpecificCampsiteToString(lengthOfStay));
             }
 
             ReservationDAL reservationDAL = new ReservationDAL(DatabaseConnection);
