@@ -220,7 +220,7 @@ namespace Capstone
             int lengthOfStay = CLIHelper.GetLengthOfStay(reqFromDate, reqToDate);
 
             Console.Clear();
-            Console.WriteLine($"Results Matching Your Search Criteria\n" + "Campground".PadRight(20) + "Site No.".PadRight(12) + "Max Occup." + "Accessible?" + "Max RV Length" + "Utility" + "Cost"); //TODO Finish this
+            Console.WriteLine($"Results Matching Your Search Criteria\n\n" + "Campground".PadRight(22) + "Site #".PadRight(10) + "Max Occup.".PadRight(13) + "Accessible?".PadRight(12) + "RV Size".PadRight(12) + "Utility".PadRight(15) + "Cost\n"); //TODO Finish this
             foreach (Site site in masterSiteList)
             {
                 Console.WriteLine(site.ToString(lengthOfStay));
@@ -229,7 +229,7 @@ namespace Capstone
             ReservationDAL reservationDAL = new ReservationDAL(DatabaseConnection);
             while (true)
             {
-                int campsiteChoice = CLIHelper.GetInteger("\nPlease select a campsite ID from the list (enter 0 to cancel)?");
+                int campsiteChoice = CLIHelper.GetInteger("\nPlease select your desired Site # from the list (enter 0 to cancel)?");
                 if (campsiteChoice == 0)
                 {
                     return;

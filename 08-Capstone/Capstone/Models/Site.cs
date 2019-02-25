@@ -37,7 +37,7 @@ namespace Capstone.Models
 
             string utilityString = (Utilities == true) ? "Yes" : "N/A";
 
-            string siteString = $"{CampgroundName}".PadRight(25) + $"{SiteID}".PadRight(10).PadLeft(5) + $"{MaxOccupancy}".PadRight(10) + $"{accessibleString}".PadRight(10) + $"{maxRvLength}".PadRight(10) + $"{utilityString}".PadRight(10) + $"{lengthOfStay * Cost:C}";
+            string siteString = $"{CampgroundName}".PadRight(25) + $"{SiteID}".PadRight(10).PadLeft(5) + $"{MaxOccupancy}".PadRight(14) + $"{accessibleString}".PadRight(10) + $"{maxRvLength}".PadRight(12) + $"{utilityString}".PadRight(12) + $"{lengthOfStay * Cost:C}";
 
             return siteString;
         }
