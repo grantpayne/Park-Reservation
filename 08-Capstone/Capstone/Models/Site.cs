@@ -22,7 +22,7 @@ namespace Capstone.Models
 
             string maxRvLength = (MaxRVLength > 0) ? MaxRVLength.ToString() : "N/A";
 
-            string utilityString = (Accessible == true) ? "Yes" : "N/A";
+            string utilityString = (Utilities == true) ? "Yes" : "N/A";
 
             string siteString = $"{SiteID}  {MaxOccupancy}  {accessibleString}  {maxRvLength}  {utilityString}  {Cost:C}";
 
@@ -35,7 +35,7 @@ namespace Capstone.Models
 
             string maxRvLength = (MaxRVLength > 0) ? MaxRVLength.ToString() : "N/A";
 
-            string utilityString = (Accessible == true) ? "Yes" : "N/A";
+            string utilityString = (Utilities == true) ? "Yes" : "N/A";
 
             string siteString = $"{CampgroundName}".PadRight(25) + $"{SiteID}".PadRight(10).PadLeft(5) + $"{MaxOccupancy}".PadRight(10) + $"{accessibleString}".PadRight(10) + $"{maxRvLength}".PadRight(10) + $"{utilityString}".PadRight(10) + $"{lengthOfStay * Cost:C}";
 
