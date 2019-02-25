@@ -38,6 +38,12 @@ namespace Capstone.Tests
                 cmd = new SqlCommand("INSERT INTO reservation(site_id, name, from_date, to_date, create_date) VALUES(@createdSiteID, 'Smith Family', '2025-04-01', '2025-05-01', GETDATE());", conn);
                 cmd.Parameters.AddWithValue("@createdSiteID", createdSiteID);
                 cmd.ExecuteNonQuery();
+                cmd = new SqlCommand("INSERT INTO reservation(site_id, name, from_date, to_date, create_date) VALUES(@createdSiteID, 'Within 30 Days', GETDATE(), GETDATE() + 15, GETDATE());", conn);
+                cmd.Parameters.AddWithValue("@createdSiteID", createdSiteID);
+                cmd.ExecuteNonQuery();
+                cmd = new SqlCommand("INSERT INTO reservation(site_id, name, from_date, to_date, create_date) VALUES(@createdSiteID, 'Beyond 30 Days', GETDATE() + 31, GETDATE() + 40, GETDATE());", conn);
+                cmd.Parameters.AddWithValue("@createdSiteID", createdSiteID);
+                cmd.ExecuteNonQuery();
 
             }
 
@@ -58,6 +64,30 @@ namespace Capstone.Tests
 
             Assert.IsNotNull(testReservationID);
             Assert.IsTrue(testReservationID > 0);
+        }
+
+        [TestMethod]
+        public void Get30DayReservationTest()
+        {
+            ReservationDAL reservationDAL = new ReservationDAL(connectionString);
+
+            IList<Reservation> Day30ReservationTestList = new List<Reservation>();
+
+            Day30ReservationTestList = reservationDAL.Get30DayReservations(createdParkID);
+
+            Assert.IsNotNull(Day30ReservationTestList);
+
+            bool containsWithin30Days = false;
+
+            foreach (Reservation reservation in Day30ReservationTestList)
+            {
+                if (reservation.Name == "Within 30 Days")
+                {
+                    containsWithin30Days = true;
+                }
+            }
+
+            Assert.IsTrue(containsWithin30Days);
         }
 
     }
