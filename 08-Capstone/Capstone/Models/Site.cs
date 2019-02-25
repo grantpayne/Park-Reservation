@@ -16,7 +16,8 @@ namespace Capstone.Models
         public decimal Cost { get; set; }
         public string CampgroundName { get; set; }
 
-        public override string ToString() //TODO: probably delete
+
+        public string ToString(int lengthOfStay, bool parkwideSearch) //This ToString takes a boolean to determine if the search is parkwide or not.
         {
             string accessibleString = (Accessible == true) ? "Yes" : "No";
 
@@ -24,22 +25,25 @@ namespace Capstone.Models
 
             string utilityString = (Utilities == true) ? "Yes" : "N/A";
 
-            string siteString = $"{SiteID}  {MaxOccupancy}  {accessibleString}  {maxRvLength}  {utilityString}  {Cost:C}";
+            string parkwideAdditionString = $"{CampgroundName}".PadRight(25);
 
-            return siteString;
+            string baseString = $"{SiteID}".PadRight(10).PadLeft(5) + $"{MaxOccupancy}".PadRight(14) + $"{accessibleString}".PadRight(10) + $"{maxRvLength}".PadRight(12) + $"{utilityString}".PadRight(12) + $"{lengthOfStay * Cost:C}";
+
+            string result;
+
+            if (parkwideSearch)
+            {
+                result = parkwideAdditionString + baseString;
+
+            }
+
+            else
+            {
+                result = baseString;
+            }
+
+            return result;
         }
 
-        public string ToString(int lengthOfStay)
-        {
-            string accessibleString = (Accessible == true) ? "Yes" : "No";
-
-            string maxRvLength = (MaxRVLength > 0) ? MaxRVLength.ToString() : "N/A";
-
-            string utilityString = (Utilities == true) ? "Yes" : "N/A";
-
-            string siteString = $"{CampgroundName}".PadRight(25) + $"{SiteID}".PadRight(10).PadLeft(5) + $"{MaxOccupancy}".PadRight(10) + $"{accessibleString}".PadRight(10) + $"{maxRvLength}".PadRight(10) + $"{utilityString}".PadRight(10) + $"{lengthOfStay * Cost:C}";
-
-            return siteString;
-        }
     }
 }
