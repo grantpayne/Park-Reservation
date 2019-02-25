@@ -38,7 +38,7 @@ namespace Capstone.Tests
                 cmd = new SqlCommand("INSERT INTO reservation(site_id, name, from_date, to_date, create_date) VALUES(@createdSiteID, 'Smith Family', '2025-04-01', '2025-05-01', GETDATE());", conn);
                 cmd.Parameters.AddWithValue("@createdSiteID", createdSiteID);
                 cmd.ExecuteNonQuery();
-                cmd = new SqlCommand("INSERT INTO reservation(site_id, name, from_date, to_date, create_date) VALUES(@createdSiteID, 'Within 30 Days', GETDATE(), GETDATE() + 15, GETDATE());", conn);
+                cmd = new SqlCommand("INSERT INTO reservation(site_id, name, from_date, to_date, create_date) VALUES(@createdSiteID, 'Within 30 Days', GETDATE() + 2, GETDATE() + 15, GETDATE());", conn);
                 cmd.Parameters.AddWithValue("@createdSiteID", createdSiteID);
                 cmd.ExecuteNonQuery();
                 cmd = new SqlCommand("INSERT INTO reservation(site_id, name, from_date, to_date, create_date) VALUES(@createdSiteID, 'Beyond 30 Days', GETDATE() + 31, GETDATE() + 40, GETDATE());", conn);
@@ -78,6 +78,7 @@ namespace Capstone.Tests
             Assert.IsNotNull(Day30ReservationTestList);
 
             bool containsWithin30Days = false;
+            bool containsBeyond30Days = false;
 
             foreach (Reservation reservation in Day30ReservationTestList)
             {
@@ -85,9 +86,15 @@ namespace Capstone.Tests
                 {
                     containsWithin30Days = true;
                 }
+                if (reservation.Name == "Beyond 30 Days")
+                {
+                    containsBeyond30Days = true;
+                }
             }
 
-            Assert.IsTrue(containsWithin30Days);
+            Assert.IsTrue(containsWithin30Days, "The List returned should include the reservation \"Within 30 Days\"");
+            Assert.IsFalse(containsBeyond30Days, "The List returned should not include the reservation \"Beyond 30 Days\"");
+
         }
 
     }
