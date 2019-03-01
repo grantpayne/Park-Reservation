@@ -25,7 +25,19 @@ namespace Capstone.Models
 
             string utilityString = (Utilities == true) ? "Yes" : "N/A";
 
-            string parkwideAdditionString = $"{CampgroundName}".PadRight(25);
+            string shortenedCampgroundName;
+            string parkwideAdditionString;
+
+            if (CampgroundName.Length > 22)
+            {
+                shortenedCampgroundName = CampgroundName.Substring(0, 18);
+                shortenedCampgroundName += "...";
+                parkwideAdditionString = $"{shortenedCampgroundName}".PadRight(25);
+            }
+            else
+            {
+                parkwideAdditionString = $"{CampgroundName}".PadRight(25);
+            }
 
             string baseString = $"{SiteID}".PadRight(10).PadLeft(5) + $"{MaxOccupancy}".PadRight(14) + $"{accessibleString}".PadRight(10) + $"{maxRvLength}".PadRight(12) + $"{utilityString}".PadRight(12) + $"{lengthOfStay * Cost:C}";
 
