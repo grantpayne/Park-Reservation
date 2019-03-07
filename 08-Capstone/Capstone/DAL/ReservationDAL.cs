@@ -9,8 +9,18 @@ namespace Capstone.DAL
 {
     public class ReservationDAL
     {
-        private const string SQL_MakeReservation = "INSERT INTO reservation(site_id, name, from_date, to_date, create_date) VALUES(@siteID, @name, @fromDate, @toDate, GETDATE()); SELECT CAST(SCOPE_IDENTITY() AS int);";
-        private const string SQL_Get30DayReservations = "SELECT reservation_id, reservation.name AS res_name, from_date, to_date, create_date, site_number, campground.name AS camp_name FROM reservation JOIN site ON reservation.site_id = site.site_id JOIN campground ON site.campground_id = campground.campground_id JOIN park ON campground.park_id = park.park_id WHERE park.park_id = @parkID AND (reservation.from_date BETWEEN GETDATE() AND (GETDATE() + 30)) ORDER BY reservation.from_date;";
+        private const string SQL_MakeReservation = "INSERT INTO reservation(site_id, name, from_date, to_date, create_date) " +
+                                                   "VALUES(@siteID, @name, @fromDate, @toDate, GETDATE()); " +
+                                                   "SELECT CAST(SCOPE_IDENTITY() AS int);";
+        private const string SQL_Get30DayReservations = "SELECT reservation_id, reservation.name AS res_name, from_date, to_date, create_date, site_number, campground.name AS camp_name " +
+                                                        "FROM reservation " +
+                                                        "JOIN site ON reservation.site_id = site.site_id " +
+                                                        "JOIN campground ON site.campground_id = campground.campground_id " +
+                                                        "JOIN park ON campground.park_id = park.park_id " +
+                                                        "WHERE park.park_id = @parkID " +
+                                                        "AND (reservation.from_date BETWEEN GETDATE() " +
+                                                        "AND (GETDATE() + 30)) " +
+                                                        "ORDER BY reservation.from_date;";
         private string connectionString;
 
         public ReservationDAL(string DatabaseConnection)

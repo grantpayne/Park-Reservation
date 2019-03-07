@@ -10,7 +10,14 @@ namespace Capstone.DAL
     public class SiteDAL
     {
         private string connectionString;
-        private string SQL_GetUnreservedCampsitesByCampground = @"SELECT TOP 5 * FROM site JOIN campground ON site.campground_id = campground.campground_id WHERE (@reqToMM BETWEEN open_from_mm AND open_to_mm) AND (@reqFromMM BETWEEN open_from_mm AND open_to_mm) AND (site.site_id IN (SELECT DISTINCT site.site_id FROM site LEFT JOIN reservation ON reservation.site_id = site.site_id WHERE (reservation_id IS NULL AND site.campground_id = @campgroundID) OR ((site.campground_id = @campgroundID AND NOT ((@reqFromDate <= reservation.to_date AND @reqToDate >= reservation.from_date) OR (reservation.from_date <= @reqFromDate AND reservation.to_date >= @reqToDate))))))";
+        private string SQL_GetUnreservedCampsitesByCampground = "SELECT TOP 5 * FROM site " +
+                                                                "JOIN campground ON site.campground_id = campground.campground_id " +
+                                                                "WHERE (@reqToMM BETWEEN open_from_mm AND open_to_mm) " +  //Check that park is open (in-season)
+                                                                "AND (@reqFromMM BETWEEN open_from_mm AND open_to_mm) " +  //Check that park is open (in-season)
+                                                                "AND (site.site_id IN (SELECT DISTINCT site.site_id FROM site LEFT JOIN reservation ON reservation.site_id = site.site_id " + //Left join to include campsites without reservations (null)
+                                                                "WHERE (reservation_id IS NULL AND site.campground_id = @campgroundID) " + //Select sites with no exisiting reservations in the seelcted campground
+                                                                "OR ((site.campground_id = @campgroundID AND NOT ((@reqFromDate <= reservation.to_date AND @reqToDate >= reservation.from_date) " + //Check for overlapping reservations
+                                                                "OR (reservation.from_date <= @reqFromDate AND reservation.to_date >= @reqToDate))))))"; //check for overlapping reservations
         private const string SQL_GetCost = @"SELECT daily_fee FROM campground WHERE campground_id = @campgroundID";
         private const string SQL_Advanced_Occupancy = "AND (max_occupancy >= @occupancy)";
         private const string SQL_Advanced_Accessibility = "AND (accessible = 1)";
